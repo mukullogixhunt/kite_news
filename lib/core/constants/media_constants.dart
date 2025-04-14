@@ -1,7 +1,7 @@
-import 'dart:developer';
 
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+
+/// Holds constant values related to media assets like images and URLs.
 class MediaConstants {
   static const _baseImage = 'assets/images';
   static const appLogo = '$_baseImage/kite_logo.png';

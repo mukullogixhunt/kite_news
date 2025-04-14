@@ -9,9 +9,9 @@ import '../../../../../core/constants/app_constants.dart';
 import '../../../domain/usecases/get_news.dart';
 
 part 'news_search_event.dart';
-
 part 'news_search_state.dart';
 
+/// Bloc for handling news search and pagination
 class NewsSearchBloc extends Bloc<NewsSearchEvent, NewsSearchState> {
   final GetNews getNews;
 
@@ -23,20 +23,17 @@ class NewsSearchBloc extends Bloc<NewsSearchEvent, NewsSearchState> {
 
   NewsSearchBloc({required this.getNews}) : super(NewsSearchInitial()) {
     on<NewsSearchEvent>((event, emit) {});
-
     on<SearchNewsEvent>(_onSearchNews, transformer: restartable());
     on<LoadMoreNewsEvent>(_onLoadMoreNews, transformer: droppable());
-
   }
 
+  /// Handles new search with fresh query
   Future<void> _onSearchNews(
-    SearchNewsEvent event,
-    Emitter<NewsSearchState> emit,
-  ) async {
+      SearchNewsEvent event,
+      Emitter<NewsSearchState> emit,
+      ) async {
     final trimmedQuery = event.query.trim();
-    if (trimmedQuery.isEmpty) {
-      return;
-    }
+    if (trimmedQuery.isEmpty) return;
 
     _currentQuery = trimmedQuery;
     _currentPage = 1;
@@ -51,11 +48,11 @@ class NewsSearchBloc extends Bloc<NewsSearchEvent, NewsSearchState> {
     );
 
     result.fold(
-      (failure) {
+          (failure) {
         log("Search Error: ${failure.message}");
         emit(NewsSearchError(failure.message, failedQuery: _currentQuery));
       },
-      (newArticles) {
+          (newArticles) {
         _articles = newArticles;
         _hasReachedMax = newArticles.length < AppConstants.pageSize;
         emit(
@@ -69,16 +66,15 @@ class NewsSearchBloc extends Bloc<NewsSearchEvent, NewsSearchState> {
     );
   }
 
+  /// Handles pagination for loading more articles
   Future<void> _onLoadMoreNews(
-    LoadMoreNewsEvent event,
-    Emitter<NewsSearchState> emit,
-  ) async {
+      LoadMoreNewsEvent event,
+      Emitter<NewsSearchState> emit,
+      ) async {
     final currentState = state;
 
     if (_isLoadingMore || _hasReachedMax || currentState is! NewsSearchLoaded) {
-      log(
-        "Load More condition not met: isLoading=$_isLoadingMore, hasReachedMax=$_hasReachedMax, state=$currentState",
-      );
+      log("Load More condition not met");
       return;
     }
 
@@ -88,18 +84,15 @@ class NewsSearchBloc extends Bloc<NewsSearchEvent, NewsSearchState> {
     }
 
     _isLoadingMore = true;
-
     final nextPage = _currentPage + 1;
-    log("Loading page $nextPage for query '${currentState.currentQuery}'");
 
     final result = await getNews(
       GetNewsParams(query: currentState.currentQuery, page: nextPage),
     );
 
     result.fold(
-      (failure) {
+          (failure) {
         log("Load More Error: ${failure.message}");
-
         emit(
           NewsSearchError(
             "Failed to load more: ${failure.message}",
@@ -108,7 +101,7 @@ class NewsSearchBloc extends Bloc<NewsSearchEvent, NewsSearchState> {
           ),
         );
       },
-      (newArticles) {
+          (newArticles) {
         _currentPage = nextPage;
         _articles.addAll(newArticles);
         _hasReachedMax = newArticles.length < AppConstants.pageSize;
@@ -124,5 +117,4 @@ class NewsSearchBloc extends Bloc<NewsSearchEvent, NewsSearchState> {
 
     _isLoadingMore = false;
   }
-
 }

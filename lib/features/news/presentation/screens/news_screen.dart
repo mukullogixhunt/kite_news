@@ -4,22 +4,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:stack_wealth_news/core/constants/media_constants.dart';
 import 'package:stack_wealth_news/core/constants/text_constants.dart';
 
-import 'package:stack_wealth_news/features/news/domain/entities/article_entity.dart';
 
-import 'package:stack_wealth_news/features/news/domain/repositories/news_repository.dart';
 import 'package:stack_wealth_news/features/news/domain/usecases/get_news.dart';
 import 'package:stack_wealth_news/features/news/presentation/bloc/news_search/news_search_bloc.dart';
-import 'package:stack_wealth_news/features/news/presentation/screens/news_detail_screen.dart';
 import 'package:stack_wealth_news/features/news/presentation/screens/search_screen.dart';
-import 'package:stack_wealth_news/features/news/presentation/widgets/news_list_item_shimmer.dart';
 
 import '../../../../injection_container.dart';
 import '../widgets/category_news_list.dart';
-import '../widgets/news_list_item_widget.dart';
 
 class NewsScreen extends StatefulWidget {
   const NewsScreen({super.key});

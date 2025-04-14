@@ -2,12 +2,12 @@ import 'dart:developer';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+/// Holds constant values used throughout the application.
 class AppConstants {
-  static final String newsApiKey = dotenv.env['NEWS_API_KEY'] ?? ''; // Handle missing key
+  static final String newsApiKey = dotenv.env['NEWS_API_KEY'] ?? '';
   static const String newsApiBaseUrl = 'https://newsapi.org/v2';
   static const int pageSize = 10;
-  static const String defaultQuery = 'technology'; // Default search on startup
-  static const int maxCachedSearches = 5; // For bonus
+  static const int maxCachedSearches = 5;
   static const String cachedSearchTermsKey = 'CACHED_SEARCH_TERMS';
 
   static void validateApiKey() {

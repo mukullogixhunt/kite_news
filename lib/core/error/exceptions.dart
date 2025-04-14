@@ -1,3 +1,4 @@
+/// Represents an error that occurred on the server side (e.g., API error).
 class ServerException implements Exception {
   final String message;
 

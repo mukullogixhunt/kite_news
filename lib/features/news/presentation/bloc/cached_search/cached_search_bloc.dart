@@ -8,9 +8,9 @@ import '../../../domain/usecases/clear_cached_search_terms.dart';
 import '../../../domain/usecases/get_cached_search_terms.dart';
 
 part 'cached_search_event.dart';
-
 part 'cached_search_state.dart';
 
+/// Bloc for managing cached search terms
 class CachedSearchBloc extends Bloc<CachedSearchEvent, CachedSearchState> {
   final GetCachedSearchTerms getCachedSearchTerms;
   final CacheSearchTerm cacheSearchTerm;
@@ -22,28 +22,29 @@ class CachedSearchBloc extends Bloc<CachedSearchEvent, CachedSearchState> {
     required this.clearCachedSearchTerms,
   }) : super(CachedSearchInitial()) {
     on<CachedSearchEvent>((event, emit) {});
-
     on<LoadCachedTermsEvent>(_onLoadCachedTerms);
     on<AddSearchTermEvent>(_onAddSearchTerm, transformer: sequential());
     on<ClearCachedTermsEvent>(_onClearCachedTerms);
   }
 
+  /// Loads cached terms from storage
   Future<void> _onLoadCachedTerms(
-    LoadCachedTermsEvent event,
-    Emitter<CachedSearchState> emit,
-  ) async {
+      LoadCachedTermsEvent event,
+      Emitter<CachedSearchState> emit,
+      ) async {
     emit(CachedSearchLoading());
     final result = await getCachedSearchTerms(NoParams());
     result.fold(
-      (failure) => emit(CachedSearchError(failure.message)),
-      (terms) => emit(CachedSearchLoaded(terms)),
+          (failure) => emit(CachedSearchError(failure.message)),
+          (terms) => emit(CachedSearchLoaded(terms)),
     );
   }
 
+  /// Adds a new search term to the cache
   Future<void> _onAddSearchTerm(
-    AddSearchTermEvent event,
-    Emitter<CachedSearchState> emit,
-  ) async {
+      AddSearchTermEvent event,
+      Emitter<CachedSearchState> emit,
+      ) async {
     final trimmedTerm = event.term.trim();
     if (trimmedTerm.isEmpty) return;
 
@@ -57,10 +58,11 @@ class CachedSearchBloc extends Bloc<CachedSearchEvent, CachedSearchState> {
     }, (_) => add(LoadCachedTermsEvent()));
   }
 
+  /// Clears all cached search terms
   Future<void> _onClearCachedTerms(
-    ClearCachedTermsEvent event,
-    Emitter<CachedSearchState> emit,
-  ) async {
+      ClearCachedTermsEvent event,
+      Emitter<CachedSearchState> emit,
+      ) async {
     final result = await clearCachedSearchTerms(NoParams());
     result.fold((failure) {
       emit(CachedSearchError("Failed to clear searches: ${failure.message}"));

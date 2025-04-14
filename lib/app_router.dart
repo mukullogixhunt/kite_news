@@ -6,6 +6,8 @@ import 'package:stack_wealth_news/features/news/presentation/screens/search_scre
 
 import 'features/news/presentation/screens/news_screen.dart';
 
+/// Configures the application's navigation using GoRouter with custom transitions.
+
 final rootNavigatorKey = GlobalKey<NavigatorState>();
 
 const Duration transitionDuration = Duration(milliseconds: 600);
@@ -13,6 +15,7 @@ const Offset slideInFromRight = Offset(1.0, 0.0);
 const Offset slideUpFromBottom = Offset(0.0, 1.0);
 const Curve transitionCurve = Curves.easeInOut;
 
+/// Builds a custom page transition with a slide animation.
 CustomTransitionPage buildTransitionPage(Widget child, Offset begin) {
   return CustomTransitionPage(
     child: child,
@@ -28,33 +31,28 @@ CustomTransitionPage buildTransitionPage(Widget child, Offset begin) {
   );
 }
 
+/// Defines the main application router and its routes.
 final GoRouter router = GoRouter(
   initialLocation: NewsScreen.path,
   navigatorKey: rootNavigatorKey,
   routes: [
     GoRoute(
       path: NewsScreen.path,
-      pageBuilder:
-          (context, state) =>
-              buildTransitionPage(const NewsScreen(), slideInFromRight),
+      pageBuilder: (context, state) =>
+          buildTransitionPage(const NewsScreen(), slideInFromRight),
     ),
-
     GoRoute(
       path: SearchScreen.path,
-      pageBuilder:
-          (context, state) =>
-              buildTransitionPage(const SearchScreen(), slideInFromRight),
+      pageBuilder: (context, state) =>
+          buildTransitionPage(const SearchScreen(), slideInFromRight),
     ),
-
     GoRoute(
       path: NewsDetailScreen.path,
-      pageBuilder:
-          (context, state) {
-
-            ArticleEntity article = state.extra as ArticleEntity;
-
-            return buildTransitionPage( NewsDetailScreen(article: article), slideUpFromBottom);
-          },
+      pageBuilder: (context, state) {
+        ArticleEntity article = state.extra as ArticleEntity;
+        return buildTransitionPage(
+            NewsDetailScreen(article: article), slideUpFromBottom);
+      },
     ),
   ],
 );

@@ -4,6 +4,7 @@ import 'package:stack_wealth_news/core/usecase/usecase.dart';
 
 import '../repositories/news_repository.dart';
 
+/// Use case for retrieving cached search terms from the repository.
 class GetCachedSearchTerms implements UseCase<List<String>, NoParams> {
   final NewsRepository repository;
 

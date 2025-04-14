@@ -1,5 +1,6 @@
 part of 'news_search_bloc.dart';
 
+/// Base class for all news search states
 sealed class NewsSearchState extends Equatable {
   const NewsSearchState();
 
@@ -7,8 +8,10 @@ sealed class NewsSearchState extends Equatable {
   List<Object?> get props => [];
 }
 
+/// Initial state when no search has been performed
 class NewsSearchInitial extends NewsSearchState {}
 
+/// Loading state during a search or while loading more news
 class NewsSearchLoading extends NewsSearchState {
   final bool isFirstFetch;
   final List<ArticleEntity> oldArticles;
@@ -24,6 +27,7 @@ class NewsSearchLoading extends NewsSearchState {
   List<Object?> get props => [isFirstFetch, oldArticles, query];
 }
 
+/// Loaded state with the results of the search
 class NewsSearchLoaded extends NewsSearchState {
   final List<ArticleEntity> articles;
   final bool hasReachedMax;
@@ -38,6 +42,7 @@ class NewsSearchLoaded extends NewsSearchState {
   @override
   List<Object?> get props => [articles, hasReachedMax, currentQuery];
 
+  /// Returns a new instance with updated properties
   NewsSearchLoaded copyWith({
     List<ArticleEntity>? articles,
     bool? hasReachedMax,
@@ -51,16 +56,17 @@ class NewsSearchLoaded extends NewsSearchState {
   }
 }
 
+/// Error state for search failures
 class NewsSearchError extends NewsSearchState {
   final String message;
   final List<ArticleEntity> currentArticles;
   final String failedQuery;
 
   const NewsSearchError(
-    this.message, {
-    this.currentArticles = const [],
-    required this.failedQuery,
-  });
+      this.message, {
+        this.currentArticles = const [],
+        required this.failedQuery,
+      });
 
   @override
   List<Object?> get props => [message, currentArticles, failedQuery];

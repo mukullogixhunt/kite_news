@@ -1,8 +1,9 @@
 import 'package:intl/intl.dart';
 
+/// Formats a DateTime into a relative 'time ago' string (e.g., "5m ago").
 String formatTimeAgo(DateTime? dateTime) {
   if (dateTime == null) {
-    return ''; // Or 'Date unknown'
+    return '';
   }
 
   final now = DateTime.now();
@@ -21,9 +22,9 @@ String formatTimeAgo(DateTime? dateTime) {
   }
 }
 
+/// Formats a DateTime using a specified date format string.
 String changeDateFormat(DateTime date, String format) {
   try {
-
     return DateFormat(format).format(date);
   } catch (e) {
     return 'Invalid date';

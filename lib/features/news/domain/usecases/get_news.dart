@@ -6,6 +6,7 @@ import 'package:stack_wealth_news/features/news/domain/entities/article_entity.d
 
 import '../repositories/news_repository.dart';
 
+/// Use case for fetching news articles based on a query and page number.
 class GetNews implements UseCase<List<ArticleEntity>, GetNewsParams> {
   final NewsRepository repository;
 
@@ -13,8 +14,9 @@ class GetNews implements UseCase<List<ArticleEntity>, GetNewsParams> {
 
   @override
   Future<Either<Failure, List<ArticleEntity>>> call(
-    GetNewsParams params,
-  ) async {
+      GetNewsParams params,
+      ) async {
+    // Basic input validation before calling the repository.
     if (params.query.trim().isEmpty) {
       return Left(UnexpectedFailure("Search query cannot be empty."));
     }
@@ -25,6 +27,7 @@ class GetNews implements UseCase<List<ArticleEntity>, GetNewsParams> {
   }
 }
 
+/// Parameters required for the GetNews use case.
 class GetNewsParams extends Equatable {
   final String query;
   final int page;

@@ -163,7 +163,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
             ],
           ),
 
-          Expanded(child: WebViewArticle(url: widget.article.url,))
+          Expanded(child: WebViewArticle(url: widget.article.url)),
         ],
       ),
     );

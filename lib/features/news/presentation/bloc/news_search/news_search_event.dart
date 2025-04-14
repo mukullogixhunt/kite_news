@@ -1,5 +1,6 @@
 part of 'news_search_bloc.dart';
 
+/// Base class for all search events
 sealed class NewsSearchEvent extends Equatable {
   const NewsSearchEvent();
 
@@ -7,6 +8,7 @@ sealed class NewsSearchEvent extends Equatable {
   List<Object> get props => [];
 }
 
+/// Trigger a new search
 class SearchNewsEvent extends NewsSearchEvent {
   final String query;
 
@@ -16,8 +18,10 @@ class SearchNewsEvent extends NewsSearchEvent {
   List<Object> get props => [query];
 }
 
+/// Load next page of results
 class LoadMoreNewsEvent extends NewsSearchEvent {}
 
+/// Refresh current search query
 class RefreshNewsEvent extends NewsSearchEvent {
   final String query;
 
@@ -26,4 +30,3 @@ class RefreshNewsEvent extends NewsSearchEvent {
   @override
   List<Object> get props => [query];
 }
-

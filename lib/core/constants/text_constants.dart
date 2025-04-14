@@ -1,7 +1,6 @@
-import 'dart:developer';
 
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+/// Holds constant values for text strings used throughout the application UI.
 class TextConstants {
   static const appName = 'Kite News';
   static const exploreHeadlines = 'Explore Headlines';

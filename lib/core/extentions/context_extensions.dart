@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'dart:developer';
 
+
+/// Extension on [BuildContext] to provide convenient access to common properties.
 extension ContextExt on BuildContext {
   ThemeData get theme => Theme.of(this);
 

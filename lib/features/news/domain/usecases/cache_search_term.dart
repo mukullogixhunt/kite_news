@@ -5,6 +5,7 @@ import 'package:stack_wealth_news/core/usecase/usecase.dart';
 
 import '../repositories/news_repository.dart';
 
+/// Use case for caching a search term via the repository.
 class CacheSearchTerm implements UseCase<void, CacheSearchTermParams> {
   final NewsRepository repository;
 
@@ -16,6 +17,7 @@ class CacheSearchTerm implements UseCase<void, CacheSearchTermParams> {
   }
 }
 
+/// Parameters required for the CacheSearchTerm use case.
 class CacheSearchTermParams extends Equatable {
   final String term;
 

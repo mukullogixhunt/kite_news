@@ -4,14 +4,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stack_wealth_news/core/constants/app_constants.dart';
 import 'package:stack_wealth_news/core/error/exceptions.dart';
 
+/// Defines the contract for accessing local news data (cached search terms).
 abstract class NewsLocalDataSource {
   Future<List<String>> getLastSearchTerms();
-
   Future<void> cacheSearchTerm(String term);
-
   Future<void> clearCachedSearchTerms();
 }
 
+/// Implements local data source operations using SharedPreferences.
 class NewsLocalDataSourceImpl implements NewsLocalDataSource {
   final SharedPreferences sharedPreferences;
 
@@ -22,11 +22,7 @@ class NewsLocalDataSourceImpl implements NewsLocalDataSource {
     final jsonStringList = sharedPreferences.getStringList(
       AppConstants.cachedSearchTermsKey,
     );
-    if (jsonStringList != null) {
-      return Future.value(jsonStringList);
-    } else {
-      return Future.value([]);
-    }
+    return Future.value(jsonStringList ?? []); // Return list or empty if null
   }
 
   @override
@@ -36,22 +32,19 @@ class NewsLocalDataSourceImpl implements NewsLocalDataSource {
 
     try {
       final currentTerms = await getLastSearchTerms();
-
+      // Manage duplicates and cache size before saving.
       currentTerms.removeWhere(
-        (t) => t.toLowerCase() == trimmedTerm.toLowerCase(),
+            (t) => t.toLowerCase() == trimmedTerm.toLowerCase(),
       );
-
       currentTerms.insert(0, trimmedTerm);
-
       final termsToCache =
-          currentTerms.take(AppConstants.maxCachedSearches).toList();
-
+      currentTerms.take(AppConstants.maxCachedSearches).toList();
       await sharedPreferences.setStringList(
         AppConstants.cachedSearchTermsKey,
         termsToCache,
       );
     } catch (e) {
-      log("SharedPreferences Error: $e");
+      log("SharedPreferences Error caching term: $e");
       throw CacheException("Could not cache search term: ${e.toString()}");
     }
   }
@@ -59,14 +52,7 @@ class NewsLocalDataSourceImpl implements NewsLocalDataSource {
   @override
   Future<void> clearCachedSearchTerms() async {
     try {
-      final success = await sharedPreferences.remove(
-        AppConstants.cachedSearchTermsKey,
-      );
-      if (!success) {
-        log(
-          "SharedPreferences remove operation returned false for key: ${AppConstants.cachedSearchTermsKey}",
-        );
-      }
+      await sharedPreferences.remove(AppConstants.cachedSearchTermsKey);
       log("Cleared cached search terms.");
     } catch (e) {
       log("SharedPreferences Error clearing terms: $e");

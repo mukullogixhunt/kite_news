@@ -1,22 +1,11 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:stack_wealth_news/core/constants/media_constants.dart';
-import 'package:stack_wealth_news/core/constants/text_constants.dart';
-
 import 'package:stack_wealth_news/features/news/domain/entities/article_entity.dart';
-
-import 'package:stack_wealth_news/features/news/domain/repositories/news_repository.dart';
-import 'package:stack_wealth_news/features/news/domain/usecases/get_news.dart';
 import 'package:stack_wealth_news/features/news/presentation/bloc/news_search/news_search_bloc.dart';
 import 'package:stack_wealth_news/features/news/presentation/screens/news_detail_screen.dart';
-import 'package:stack_wealth_news/features/news/presentation/screens/search_screen.dart';
 import 'package:stack_wealth_news/features/news/presentation/widgets/news_list_item_shimmer.dart';
-
-import '../../../../injection_container.dart';
 import '../widgets/news_list_item_widget.dart';
 
 class CategoryNewsList extends StatefulWidget {
@@ -42,30 +31,19 @@ class _CategoryNewsListState extends State<CategoryNewsList>
 
     final bloc = context.read<NewsSearchBloc>();
     if (bloc.state is NewsSearchInitial) {
-      log(
-        '_CategoryNewsList [${widget.category}] initState: State is initial, fetching data.',
-      );
       bloc.add(SearchNewsEvent(widget.category));
-    } else {
-      log(
-        '_CategoryNewsList [${widget.category}] initState: State already exists.',
-      );
     }
   }
 
   @override
   void dispose() {
     widget.scrollController.removeListener(_onScroll);
-    log('_CategoryNewsList [${widget.category}] dispose.');
     super.dispose();
   }
 
+  /// Checks if the user has scrolled to the bottom of the list
   void _onScroll() {
     if (_isBottom) {
-      log(
-        '_CategoryNewsList [${widget.category}] _onScroll: Reached bottom, loading more.',
-      );
-
       context.read<NewsSearchBloc>().add(LoadMoreNewsEvent());
     }
   }
@@ -74,13 +52,11 @@ class _CategoryNewsListState extends State<CategoryNewsList>
     if (!widget.scrollController.hasClients) return false;
     final maxScroll = widget.scrollController.position.maxScrollExtent;
     final currentScroll = widget.scrollController.offset;
-
     return currentScroll >= (maxScroll * 0.95);
   }
 
+  /// Handles pull-to-refresh action
   Future<void> _handleRefresh() async {
-    log('_CategoryNewsList [${widget.category}] _handleRefresh: Refreshing.');
-
     context.read<NewsSearchBloc>().add(SearchNewsEvent(widget.category));
   }
 
@@ -90,8 +66,6 @@ class _CategoryNewsListState extends State<CategoryNewsList>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-
-    log('_CategoryNewsList [${widget.category}] build.');
 
     return BlocConsumer<NewsSearchBloc, NewsSearchState>(
       listener: (context, state) {
@@ -108,18 +82,13 @@ class _CategoryNewsListState extends State<CategoryNewsList>
         }
       },
       builder: (context, state) {
-        if (state is NewsSearchInitial ||
-            (state is NewsSearchLoading && state.isFirstFetch)) {
-          log(
-            '_CategoryNewsList [${widget.category}] builder: Showing loading shimmer.',
-          );
+        // Loading state
+        if (state is NewsSearchInitial || (state is NewsSearchLoading && state.isFirstFetch)) {
           return _buildLoadingShimmer(context);
         }
 
+        // Error state with no articles
         if (state is NewsSearchError && state.currentArticles.isEmpty) {
-          log(
-            '_CategoryNewsList [${widget.category}] builder: Showing full error widget.',
-          );
           return _buildErrorWidget(context, state.message);
         }
 
@@ -135,29 +104,21 @@ class _CategoryNewsListState extends State<CategoryNewsList>
           articles = state.oldArticles;
           hasReachedMax = false;
           isLoadingMore = true;
-        } else if (state is NewsSearchError &&
-            state.currentArticles.isNotEmpty) {
+        } else if (state is NewsSearchError && state.currentArticles.isNotEmpty) {
           articles = state.currentArticles;
           hasReachedMax = true;
           isLoadMoreError = true;
         }
 
+        // If no articles and it's not loading more, show empty widget
         if (articles.isEmpty && !isLoadingMore && state is NewsSearchLoaded) {
-          log(
-            '_CategoryNewsList [${widget.category}] builder: Showing empty list widget.',
-          );
           return _buildEmptyListWidget(context, widget.category);
         }
-
-        log(
-          '_CategoryNewsList [${widget.category}] builder: Showing list with ${articles.length} items. isLoadingMore: $isLoadingMore, hasReachedMax: $hasReachedMax, isLoadMoreError: $isLoadMoreError',
-        );
 
         return RefreshIndicator(
           onRefresh: _handleRefresh,
           child: ListView.separated(
             controller: widget.scrollController,
-
             physics: const AlwaysScrollableScrollPhysics(),
             itemCount: articles.length + (isLoadingMore ? 1 : 0),
             separatorBuilder: (context, index) {
@@ -171,10 +132,8 @@ class _CategoryNewsListState extends State<CategoryNewsList>
               }
             },
             itemBuilder: (context, index) {
+              // Loading more item
               if (index >= articles.length) {
-                log(
-                  '_CategoryNewsList [${widget.category}] itemBuilder: Showing loading indicator.',
-                );
                 return const Center(
                   child: Padding(
                     padding: EdgeInsets.symmetric(vertical: 16.0),
@@ -198,6 +157,7 @@ class _CategoryNewsListState extends State<CategoryNewsList>
     );
   }
 
+  // Displays shimmer effect for loading
   Widget _buildLoadingShimmer(BuildContext context) {
     return Shimmer.fromColors(
       baseColor: Colors.grey[300]!,
@@ -205,11 +165,10 @@ class _CategoryNewsListState extends State<CategoryNewsList>
       child: ListView.separated(
         itemCount: 8,
         physics: const NeverScrollableScrollPhysics(),
-        separatorBuilder:
-            (context, index) => Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16),
-              child: const Divider(thickness: 1.5, height: 1.5),
-            ),
+        separatorBuilder: (context, index) => Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16),
+          child: const Divider(thickness: 1.5, height: 1.5),
+        ),
         itemBuilder: (context, index) {
           return const NewsListItemShimmer();
         },
@@ -217,6 +176,7 @@ class _CategoryNewsListState extends State<CategoryNewsList>
     );
   }
 
+  // Displays an error widget when fetching news fails
   Widget _buildErrorWidget(BuildContext context, String message) {
     return Center(
       child: Padding(
@@ -242,6 +202,7 @@ class _CategoryNewsListState extends State<CategoryNewsList>
     );
   }
 
+  // Displays a message when no articles are found
   Widget _buildEmptyListWidget(BuildContext context, String query) {
     return Center(
       child: Padding(
@@ -252,7 +213,7 @@ class _CategoryNewsListState extends State<CategoryNewsList>
             Icon(Icons.article_outlined, color: Colors.grey[400], size: 50),
             const SizedBox(height: 10),
             Text(
-              'No articles found for "${query}".',
+              'No articles found for "$query".',
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 15),

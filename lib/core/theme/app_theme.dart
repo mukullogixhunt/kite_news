@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 
+/// Defines the application's theme data, including colors, fonts, and widget styles.
 class AppTheme {
+  /// The primary red color used throughout the application.
   static const Color primaryRed = Color(0xFFE53935);
 
+  /// Provides the light theme configuration for the application.
   static ThemeData get lightTheme {
     return ThemeData(
+      /// Basic theme setup: Enable Material 3, set font, brightness, and background.
       useMaterial3: true,
       fontFamily: 'Inter',
       brightness: Brightness.light,
       scaffoldBackgroundColor: Colors.white,
 
+      /// Defines the application's color palette based on the primary red.
       colorScheme: ColorScheme.fromSeed(
         seedColor: primaryRed,
         brightness: Brightness.light,
@@ -25,6 +30,7 @@ class AppTheme {
         onError: Colors.white,
       ),
 
+      /// Configures the default appearance of AppBars.
       appBarTheme: AppBarTheme(
         backgroundColor: Colors.white,
         foregroundColor: Colors.grey[800],
@@ -38,6 +44,7 @@ class AppTheme {
         ),
       ),
 
+      /// Configures the default appearance of Cards.
       cardTheme: CardTheme(
         elevation: 0.5,
         shape: RoundedRectangleBorder(
@@ -48,6 +55,7 @@ class AppTheme {
         margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
       ),
 
+      /// Configures the default appearance of Chips.
       chipTheme: ChipThemeData(
         backgroundColor: Colors.grey[100],
         disabledColor: Colors.grey[300]!,
@@ -65,10 +73,10 @@ class AppTheme {
         padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6.0)),
         side: BorderSide.none,
-
         brightness: Brightness.light,
       ),
 
+      /// Configures the default appearance of InputDecorations (for TextFields).
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: Colors.grey[100],
@@ -100,6 +108,7 @@ class AppTheme {
         ),
       ),
 
+      /// Configures the default style for ElevatedButtons.
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: primaryRed,
@@ -117,6 +126,7 @@ class AppTheme {
         ),
       ),
 
+      /// Defines various text styles used throughout the application.
       textTheme: TextTheme(
         headlineSmall: TextStyle(
           fontFamily: 'Inter',
@@ -154,10 +164,9 @@ class AppTheme {
         ),
       ),
 
+      /// Configures Divider, Icon themes and visual density.
       dividerTheme: DividerThemeData(color: Colors.grey[200], thickness: 0.8),
-
       iconTheme: IconThemeData(color: Colors.grey[700], size: 22.0),
-
       visualDensity: VisualDensity.standard,
     );
   }
